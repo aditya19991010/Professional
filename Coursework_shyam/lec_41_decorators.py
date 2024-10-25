@@ -1,6 +1,6 @@
 # #generators
-# import math
-# import time
+import math
+import time
 #
 # from Coursework_shyam.lec36 import functions
 #
@@ -17,7 +17,7 @@ def decorators(func):
 #     name = input("May I know your first name? ")
 #     print("Hello!", name)
 
-hello()
+# hello()
 #
 # ## To calculate time execution of a function
 
@@ -30,14 +30,14 @@ def calc_time(func):
     return inner1
 
 @calc_time
-def fact(num, power):
-    time.sleep(3)
+def fact(num):
+    time.sleep(1)
     print(math.factorial(num))
+fact(10)
 
 def hello_deco(func):
     def inner1(*args, **kwargs):
         print("before execution")
-
         return_val = func(*args, **kwargs)
         print("after execution")
         return return_val
