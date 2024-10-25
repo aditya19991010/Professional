@@ -2,10 +2,7 @@
 # the two numbers respectively. Create a function OperateNumbers that takes
 # AddNumbers / SubtractNumbers as argument and invokes the function passed as
 # argument with default values.
-# B. Repeat the above for the operations on strings (ConcatenateStrings(str1, str2) and
-# ReplaceWord(str1, str2=”” and OperateStrings(func) )
-from pydoc import replace
-from webbrowser import Opera
+from os import replace
 
 
 def AddNumbers(x,y):
@@ -25,6 +22,8 @@ def OperateNumbers(func,a,b):
 OperateNumbers(AddNumbers,1010,1202)
 OperateNumbers(SubtractNumbers,1010,800)
 
+# B. Repeat the above for the operations on strings (ConcatenateStrings(str1, str2) and
+# ReplaceWord(str1, str2=”” and OperateStrings(func) )
 
 str1 = "Hello! "
 str2 = "World"
