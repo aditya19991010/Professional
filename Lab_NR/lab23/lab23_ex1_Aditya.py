@@ -39,6 +39,7 @@ def find_letter(string):
             if letter == key:
                 output.append(key)
 
+
     return output
 
 print(find_letter(string))
