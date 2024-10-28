@@ -46,6 +46,3 @@ get_square = CreateExponent(2)
 get_cube = CreateExponent(3)
 print("Square of 3: ", get_square(3))
 print("Cube  of 3: ", get_cube(3))
-
-
-

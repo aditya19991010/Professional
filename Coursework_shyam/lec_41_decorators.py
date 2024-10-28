@@ -42,9 +42,8 @@ def hello_deco(func):
         print("after execution")
         return return_val
     return inner1
-#
-# #
-#
+
+
 # def name_spaces():
 #     #visibility and scope of functions, Global scope and local scope
 #

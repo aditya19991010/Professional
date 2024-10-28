@@ -39,14 +39,17 @@ cesar_shift(text)
 
 # 3. Write a Python script to get the co-ordinates of several points in a
 # polygon and print the perimeter of the p polygon. The points should
-# be obtaind in loops until a blank line is entered.
+# be obtained in loops until a blank line is entered.
 
 from math import sqrt
+# d=√((x2 – x1)² + (y2 – y1)²)
 
-def coordinates(x1,x2,y1,y2):
-    if x1 or x2 or y1 or y2 ==0 :
-        exit(0)
-    if
+def coordinates(x,y):
+    perimeter = x + y
+    x = []
+    y = []
+    d = sqrt((x2-x1)**2 + ())
+
 
 
 
