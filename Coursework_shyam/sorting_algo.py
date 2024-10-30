@@ -1,5 +1,5 @@
 #Merge sort
-from math import floor
+from math_dir import floor
 
 # read the array
 # split until it split into individual elements
