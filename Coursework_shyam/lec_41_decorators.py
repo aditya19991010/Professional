@@ -1,5 +1,5 @@
 # #generators
-import math
+import math_dir
 import time
 #
 # from Coursework_shyam.lec36 import functions
@@ -32,7 +32,7 @@ def calc_time(func):
 @calc_time
 def fact(num):
     time.sleep(1)
-    print(math.factorial(num))
+    print(math_dir.factorial(num))
 fact(10)
 
 def hello_deco(func):
