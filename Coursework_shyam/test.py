@@ -1,7 +1,4 @@
-from Coursework_shyam.math.la import get_description as gd
-import stat
-
-
+from Coursework_shyam.math_dir.la import get_description as gd
 
 gd()
 
