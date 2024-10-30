@@ -1,6 +1,6 @@
-# from Coursework_shyam import math
+# from Coursework_shyam import math_dir
 # import calculus
-# from Coursework_shyam.math.calculus import power_exponenet
+# from Coursework_shyam.math_dir.calculus import power_exponenet
 
 # from random import choice
 
