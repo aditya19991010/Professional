@@ -56,3 +56,90 @@ p = player()
 p.display()
 p = cricket_player()
 p.display()
+ties
+##Lec 46
+
+#creating class hierarchy
+
+class Person():
+    def __init__(self, name):
+        self.name = name
+
+class email_person(Person):
+    def __init__(self,name,email):
+        super().__init__(name) #While using methods from parent class, use super() method to call the functions from parent class
+        self.email = email
+
+sachin = email_person("Sac Tendulkar", "sachin21@gmail.com")
+print(sachin)
+rahane = Person("Rahane")
+print(sachin.name)
+print(sachin.email)
+
+
+class circle:
+    def __init__(self, radius):
+        self.radius = radius
+
+    @property #built-in Python decorator that turns class methods into properties.
+    def diameter(self):
+        return 2 * self.radius
+
+c1 = circle(24)
+print("Calculating Diameter -->",c1.diameter)
+
+class player_hidden_name():
+    def  __init__(self, name):
+        self.__name = name
+
+    @property
+    def name(self):
+        print("Inside the getter")
+        return self.__name
+
+    # @name_setter
+    # def new_name(self, new_nn):
+    #     print("Inside setter")
+    #     new_n = self.__name == new_nn
+    #     return new_n
+
+kohli = player_hidden_name("Virat")
+print(kohli.name)
+
+class A():
+    count = 0
+    def __init__(self):
+        A.count +=1
+
+    @classmethod
+    def child(cls): #cls -- mandatory, python keyword
+        print(cls.count)
+
+    # @staticmethod #involke
+
+#
+# a1 = A()
+# a2 = A()
+# print(a1)
+
+from datetime import date
+
+class Person:
+    def __init__(self,name,age):
+        self.__name = name
+        self.__age = age
+        return print(name,age)
+
+    @classmethod
+    def frombirthyear(cls, name, year):
+        print(name, year)
+        return cls(name, date.today().year - year)
+
+    @staticmethod
+    def isadult(age):
+        return age >18
+
+person1 = Person("Aditya", 24)
+person1 = Person.isadult(24)
+print(person1)
+
