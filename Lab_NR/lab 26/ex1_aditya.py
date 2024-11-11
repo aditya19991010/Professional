@@ -16,6 +16,7 @@ def matrix_multiplication():
     b_row2 = list(map(int,input("Enter numbers for matrix row 2 for Matrix B, followed by ',': ").split(",")))
     b_row3 = list(map(int,input("Enter numbers for matrix row 3 for Matrix B, followed by ',': ").split(",")))
     # print(a_row1, a_row2)
+
     a.append(a_row1)
     a.append(a_row2)
 
