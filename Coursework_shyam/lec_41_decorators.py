@@ -33,6 +33,7 @@ def calc_time(func):
 def fact(num):
     time.sleep(1)
     print(math.factorial(num))
+
 fact(10)
 
 def hello_deco(func):
