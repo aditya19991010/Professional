@@ -2,7 +2,8 @@
 # the two numbers respectively. Create a function OperateNumbers that takes
 # AddNumbers / SubtractNumbers as argument and invokes the function passed as
 # argument with default values.
-from os import replace
+from pydoc import replace
+from time import process_time_ns
 
 
 def AddNumbers(x,y):
@@ -28,14 +29,17 @@ OperateNumbers(SubtractNumbers,1010,800)
 str1 = "Hello! "
 str2 = "World"
 def ConcatenateStrings(str1,str2):
-    return print(str1+str2)
+    return print(str1+str2,"\n")
 
 def ReplaceWord(str1,str2=""):
-    replaced = replace(str1,str2)
-    return print(replaced)
+    changed = str1.replace(str1,str2)
+    return print(changed,"\n")
 
 def OperateStrings(func,a,b):
     return func(a,b)
 
+print("Concatenate string , str1 and str2 ---->")
 OperateStrings(ConcatenateStrings,str1,str2)
+
+print("Replacing str1 = 'Hello!' with str2 = 'World'---->")
 OperateStrings(ReplaceWord,str1,str2)

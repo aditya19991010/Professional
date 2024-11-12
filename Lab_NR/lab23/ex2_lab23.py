@@ -6,27 +6,33 @@
 import random
 from time import process_time
 
+print("Generating numbers between 1-10.")
 number  = [x for x in range(1,11)]
 print(number)
 
 square_list = [x**2 for x in number]
-print(square_list)
+print("\nsquare list\n",square_list)
+
 
 square_gen = (x**2 for x in number)
 print(square_gen)
+print("\nsquare list generator\n",square_gen)
 
-print(next(square_gen))
+print("\nnext number from square list")
 print(next(square_gen))
 print(next(square_gen))
 
 even_num = [even for even in number if even % 2 ==0 ]
 odd_num = [odd for odd in number if odd % 2 != 0]
 even_list = [x**2 for x in number]
+print("\nPrinting even num list")
 print(even_list)
 
 even_gen = (x**2 for x in number)
+print("\nPrinting even number generator")
 print(even_gen)
 
+print("\nPrinting even and odd numbers")
 print(even_num)
 print(odd_num)
 
