@@ -56,3 +56,4 @@ def coordinates(x1,x2,y1,y2):
 # 1s in the byte is even, it prints the parity bit as 0, else it prints it as 1.
 
 
+
