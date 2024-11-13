@@ -1,4 +1,8 @@
+import re
+from typing import final
+
 import pandas as pd
+
 
 df = pd.DataFrame(
     {
@@ -68,3 +72,124 @@ print(df_s["Age"].mean())
 df_sp = titanic.groupby(["Sex", "Pclass"])
 print(df_sp["Fare"].mean())
 
+###Count number of records by category
+#number of passengers in each of the classes
+print(titanic["Pclass"].value_counts())
+
+##sorting by Fare
+titanic_sorted_age = titanic.sort_values(by="Fare").head()
+print(titanic_sorted_age)
+
+
+#combine data from multiple files
+# print(os.getcwd())
+os.chdir("Python_data/Python/")
+air_quality_no2_long = pd.read_csv("air_quality_no2_long.csv", parse_dates=True)
+print(air_quality_no2_long.shape)
+print(air_quality_no2_long.columns)
+air_quality_pm25 = pd.read_csv("air_quality_pm25_long.csv", parse_dates=True)
+print(air_quality_pm25.shape)
+
+air_quality_pm25 = air_quality_pm25[["date.utc", "location", "parameter", "value"]]
+
+air_quality = pd.concat([air_quality_no2_long,air_quality_pm25], axis=0)
+print(air_quality.shape)
+
+
+## Join tables using a common identifier
+df1 = pd.DataFrame({'a':['foo','bar'], 'b':[1,2]})
+df2 = pd.DataFrame({'a':['foo','baz'], 'b':[3,4]})
+
+#join - common type {inner_join, left_join, right_join}, cross_join
+# Take commons between two columns
+# https://pandas.pydata.org/docs/user_guide/merging.html
+
+df_inner = df1.merge(df2,how="inner", on='a')
+print("Inner\n",df_inner)
+df_left = df1.merge(df2,how="left", on='a')
+print("Left\n",df_left)
+df_right = df1.merge(df2,how="right", on='a')
+print("right\n",df_right)
+
+df1 = pd.DataFrame({'a':['foo','bar']})
+df2 = pd.DataFrame({'b':[1,2]})
+
+df_cross = df1.merge(df2,how="cross")
+print(df_cross)
+
+
+##Regular expressions (Regex)
+# result - re.match(patter,sources)
+
+
+print(re.match('Ro', "Rohit Sharma"))
+
+#compile to speed ip the search
+pattern = re.compile("Rohit")
+result = pattern.match("Rohit Sharma")
+print(result)
+
+#to return the span information
+if result:
+    print(result.group())
+
+
+# '.*' used as a wildcard for searching
+
+source = "Sachin Ramesh Tendulkar"
+m = re.match('.*Ten', source)
+if m:
+    print(m.group())
+
+# findall() returns a list of all non-overlapping matches, if any.
+sources = "It was a good match against Australia with food cricket display"
+pattern = re.compile("g.*d")
+
+result = pattern.findall(sources)
+
+print(result)
+
+result = pattern.split(sources)
+
+print(result)
+
+
+# result = re.findall( "It was a good match against Australia with food cricket display")
+print(result)
+
+# result = re.sub("good",  "It was a good match against Australia with food cricket display")
+
+
+import string
+printable = string.printable
+print(len(printable))
+print(printable[0:50])
+
+
+m = re.findall('\\d',printable) #search for the digit
+if m:
+    print(m)
+
+m = re.findall('\\w', printable) #digit or character
+if m:
+    print(m)
+
+m = re.findall("\\s", printable)
+print(m)
+
+source = '''I wish I may, I wish I might Have a dish of fish tonight'''
+m = re.findall('wish',source)
+print(m)
+
+m = re.findall('wish|fish',source)
+print(m)
+
+m = re.findall('^I',source) #check for the begining
+print(m)
+
+m = re.findall('[wf]ish',source)  #find word with 1st letter either w or f
+print(m)
+
+
+m = re.findall('[wsh]+',source)  #find word with 1st letter either w or f
+print(m)
