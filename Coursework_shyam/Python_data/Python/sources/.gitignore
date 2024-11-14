@@ -1,0 +1,27 @@
+# Ignore everything in repository root 
+/*
+
+# Files to not ignore
+!/*.py
+!/*.R
+!/*.sh
+!/*.txt
+!/*.c
+!/.gitignore
+!/README.md
+
+
+# Folder to not ignore
+!/RATSS/
+!/euaims_ratss/
+!/ratss_prscs/
+!/registry/
+!/ratss_prset/
+!/singlecell/
+!/tutorial/
+!/ratss_model/
+!/spark_model/
+!/ssc_model/
+!/metabolites_model/
+!/sources/
+.Rproj.user
