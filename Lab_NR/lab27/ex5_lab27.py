@@ -19,8 +19,8 @@ with open('morse_code.json', 'w') as json_file:
 with open('1MB.json', 'r') as json_file:
     mb_data = json.load(json_file)
 
-for items in mb_data:
-    for key,value in dict(items).items():
-        if items['name'] == "Bhupesh Menon":
-            print(items["language"])
-            break
+for dict1 in mb_data:
+    for key,value in dict1.items():
+        if dict1['name'] == "Bhupesh Menon":
+            print(dict1["language"])
+        break

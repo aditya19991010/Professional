@@ -1,15 +1,22 @@
-with open('../../../../.config/JetBrains/PyCharmCE2024.2/scratches/example.txt', mode='w') as file:
+import os
+os.chdir("../../../../.config/JetBrains/PyCharmCE2024.2/scratches/")
+
+with open('example.txt', mode='w') as file:
     file.write('''Hello, this is written from Python\n,This is the second line''')
 
-with open('../../../../.config/JetBrains/PyCharmCE2024.2/scratches/example.txt', mode='r') as file:
+with open('example.txt', mode='r') as file:
     for row in file:
         print(row)
 
-
-
 ##modify this
-with open('../../../../.config/JetBrains/PyCharmCE2024.2/scratches/example.txt', mode='r+') as file:
-    print(file.readlines(2))
-    mod_lines = ''' This is the modified 2nd line '''
-    file.writelines(mod_lines)
-    print(file.readlines())
+with open('example.txt', mode='r') as file:
+    data = file.readlines()
+
+data[1] = ''' This is the modified 2nd line '''
+
+with open('example.txt', mode='w') as file:
+    file.writelines(data)
+
+with open('example.txt', mode='r') as file:
+    data = file.readlines()
+    print(data)

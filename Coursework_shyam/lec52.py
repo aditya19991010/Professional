@@ -1,8 +1,8 @@
 import re
-from typing import final
+from os import PRIO_USER
 
 import pandas as pd
-
+from pyparsing import matchPreviousLiteral
 
 df = pd.DataFrame(
     {
@@ -193,3 +193,53 @@ print(m)
 
 m = re.findall('[wsh]+',source)  #find word with 1st letter either w or f
 print(m)
+
+m = re.findall('[wsh]',source)  #find word with 1st letter either w or f
+print(m)
+
+
+##lec53
+m = re.findall('I (?=wish)',source)  #find word I before 'wish'
+print(m)
+
+m = re.findall('(?<=I) wish',source)  #find 'wish' preceeded by I
+print(m)
+
+m = re.findall('\bfish',source)  #\b means backspace
+print(m)
+
+
+m = re.findall(r'\bfish',source)  #use r in pattern always to consider literal meaning of regex \b unlike \n as newline
+print(m)
+
+
+
+m = re.search(r'(. dish\b).*(\bfish)',source)  #
+print(m.group())
+print(m.groups())
+
+m = re.search(r'(?P<DISH>. dish\b).*(\bfish)',source)  #
+print(m.group())
+print(m.groups())
+
+print(m.group('DISH'))
+
+#Finding motif
+import sys
+DNA = 'ACGGGGGCAATCATGTGATCGATCGATAATAA'
+print("DNA seq - ", DNA)
+
+motif = r'ATG.*?TAA' #With *? checks on as few as possible and .* as many as possible
+print('Motif: ', motif)
+
+try:
+    re.compile(motif)
+except:
+    print('Invalid regex, exiting the program.')
+    sys.exit()
+
+match = re.search(motif, DNA)
+if match:
+    print(' Found the motif:', match.group())
+    print(' Starting at index:', match.start())
+    print(' Ending at index:', match.end())
