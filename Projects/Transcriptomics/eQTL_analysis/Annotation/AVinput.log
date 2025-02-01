@@ -1,0 +1,112 @@
+using annovar for annotation of variants
+input = avinput
+variant information required
+    col = "chromosome", "start", "end" , "ref","alt"
+
+
+Stepwise data processing for annotation and annotation using ANNOVAR
+1. Collect rsID from eQTL Results
+    1.1 remove duplicates 
+2. fetch complete ID from VCF files 
+        # Read the rsID from a eQTL result file into a character vector
+        rsID <- scan("/home/sumit2/MMNP_RNAseqdata/MMNP_eQTL/Matrix_eQTL_Analysis/01_Raw_Data/Genotype_Data/cis_SNPs_info09_171_cis_SNP.txt", what = "character", sep = "\n")
+
+        # Read the SNP all data (extract from VCF or VCF file directly) file where you want to search for keywords
+        file_path <- "/home/sumit2/MMNP_RNAseqdata/MMNP_eQTL/Matrix_eQTL_Analysis/01_Raw_Data/Genotype_Data/SNP_All_data_Chr_ALL_MMNP_MCduo_info09_b37_171_23042018_trans.txt"
+
+        # Read the lines of the file into a character vector
+        file_lines <- readLines(file_path)
+
+        # Find lines containing any of the keywords
+        matching_lines <- grep(paste(keywords, collapse = "|"), file_lines, value = TRUE)
+
+        # Print the matching lines
+        print(matching_lines)
+
+3. Look up and confirm the IDs extracted from VCF
+4. Subset VCF using vcftools
+    $PATH1 = /home/sumit2/MMNP_RNAseqdata/Imputed_Genome
+    $PATH2 = /home/sumit2/MMNP_RNAseqdata/MMNP_eQTL/Matrix_eQTL_Analysis/01_Raw_Data/Genotype_Data
+    vcftools --vcf $PATH/Chr_ALL_MMNP_MCduo_info05_b37_171_QC_EDITED_filtered_data.vcf --out $PATH/ciseQTL_MMNP_MCduo_info09_b37_171_QC  --recode  --snps $PATH/snpid_for_subset_vcf_ANNOVAr.txt
+5. Convert VCF to avinput
+    perl convert2annovar.pl -format vcf4old ../../01_Raw_Data/Genotype_Data/ciseQTL_MMNP_MCduo_info09_b37_171_QC.recode.vcf  > ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput
+
+6. perl table_annovar.pl ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput humandb/ -buildver hg19 -out cis_SNP_DATA_info09_b37_171_23042018_trans.csv -remove -protocol refGeneWithVer,cytoBand -operation g,r -nastring . -csvout -polish
+
+
+perl table_annovar.pl ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput humandb/ -buildver hg19 -out >
+-----------------------------------------------------------------
+NOTICE: Processing operation=g protocol=refGeneWithVer
+
+NOTICE: Running with system command <annotate_variation.pl -geneanno -buildver hg19 -dbtype refGeneWithVer -outfile cis_SNP_DATA_info09_b37_171_23042018_trans.csv.refGeneWithVer -exonsort -nofirstcodondel ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput humandb/>
+NOTICE: Output files are written to cis_SNP_DATA_info09_b37_171_23042018_trans.csv.refGeneWithVer.variant_function, cis_SNP_DATA_info09_b37_171_23042018_trans.csv.refGeneWithVer.exonic_variant_function
+NOTICE: Reading gene annotation from humandb/hg19_refGeneWithVer.txt ... Done with 72212 transcripts (including 17527 without coding sequence annotation) for 28250 unique genes
+NOTICE: Processing next batch with 270 unique variants in 270 input lines
+NOTICE: Reading FASTA sequences from humandb/hg19_refGeneWithVerMrna.fa ... Done with 13 sequences
+WARNING: A total of 446 sequences will be ignored due to lack of correct ORF annotation
+
+---------------------------------------------------------------------------------------
+WARNING: 9 exonic SNPs have WRONG reference alleles specified in your input file!
+WARNING: An example input line is <19   10132000        10132000        A       G       het     .>
+WARNING: ANNOVAR can still annotate exonic_variant_function for the mutation correctly!
+WARNING: you may have used wrong -buildver, or specified incorrect reference allele, or used outdated mRNA FASTA file!
+---------------------------------------------------------------------------------------
+
+
+NOTICE: Running with system command <coding_change.pl  cis_SNP_DATA_info09_b37_171_23042018_trans.csv.refGeneWithVer.exonic_variant_function.orig humandb//hg19_refGeneWithVer.txt humandb//hg19_refGeneWithVerMrna.fa -alltranscript -out cis_SNP_DATA_info09_b37_171_23042018_trans.csv.refGeneWithVer.fa -newevf cis_SNP_DATA_info09_b37_171_23042018_trans.csv.refGeneWithVer.exonic_variant_function>
+-----------------------------------------------------------------
+NOTICE: Processing operation=r protocol=cytoBand
+
+NOTICE: Running with system command <annotate_variation.pl -regionanno -dbtype cytoBand -buildver hg19 -outfile cis_SNP_DATA_info09_b37_171_23042018_trans.csv ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput humandb/>
+NOTICE: Output file is written to cis_SNP_DATA_info09_b37_171_23042018_trans.csv.hg19_cytoBand
+NOTICE: Reading annotation database humandb/hg19_cytoBand.txt ... Done with 862 regions
+NOTICE: Finished region-based annotation on 270 genetic variants
+-----------------------------------------------------------------
+NOTICE: Multianno output file is written to cis_SNP_DATA_info09_b37_171_23042018_trans.csv.hg19_multianno.csv
+
+
+
+
+
+
+##Alternative WAYS
+fetch variant ID from cis-eQTL result
+    file == log_summary_eQTL_MMNP_8DEG_info09_QC_genotype_GExp.txt
+    separate rs IDs
+
+
+
+
+ awk '{print $1, "\t", $2, "\t", $3,"\t", $4,"\t",$5}'  ../../../../Imputed_Genome/Chr_ALL_MMNP_MCduo_info05_b37_171_QC_EDITED_filtered_data.vcf > SNP_All_data_Chr_ALL_MMNP_MCduo_info09_b37_171_23042018_trans.txt
+
+for i in `cat cis_SNP_info09_b37_171_23042018_trans.txt`; do grep -A0 $i SNP_All_data_Chr_ALL_MMNP_MCduo_info09_b37_171_23042018_trans.txt; done > cis_SNP_DATA_info09_b37_171_23042018_trans.txt
+
+$PATH = /home/sumit2/MMNP_RNAseqdata/MMNP_eQTL/Matrix_eQTL_Analysis/01_Raw_Data/Genotype_Data
+##Trying extracting SNPs specific data in VCF format
+vcftools --vcf /home/sumit2/MMNP_RNAseqdata/Imputed_Genome/Chr_ALL_MMNP_MCduo_info05_b37_171_QC_EDITED_filtered_data.vcf --out ciseQTL_MMNP_MCduo_info09_b37_171_QC   --recode  --snps /home/sumit2/MMNP_RNAseqdata/MMNP_eQTL/Matrix_eQTL_Analysis/01_Raw_Data/Genotype_Data/cis_SNPs_info09_171_cis_SNP.txt 
+
+perl convert2annovar.pl -format vcf4 ../../01_Raw_Data/Genotype_Data/ciseQTL_MMNP_MCduo_info09_b37_171_QC.recode.vcf  > ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput
+
+$ perl annotate_variation.pl -out anno_cis_SNP_DATA_info09_b37_171_23042018_trans --geneanno -build hg19 ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput humandb/
+
+##Updating ANNOVAR databases
+$ perl annotate_variation.pl -downdb -buildver hg19 -webfrom annovar refGene humandb/
+    NOTICE: Web-based checking to see whether ANNOVAR new version is available ... Done
+    NOTICE: Downloading annotation database http://www.openbioinformatics.org/annovar/download/hg19_refGene.txt.gz ... OK
+    NOTICE: Downloading annotation database http://www.openbioinformatics.org/annovar/download/hg19_refGeneMrna.fa.gz ... OK
+    NOTICE: Downloading annotation database http://www.openbioinformatics.org/annovar/download/hg19_refGeneVersion.txt.gz ... OK
+    NOTICE: Uncompressing downloaded files
+    NOTICE: Finished downloading annotation files for hg19 build version, with files saved at the 'humandb' directory
+
+##convert file into avinput format 
+    Done using Excel
+
+$ perl annotate_variation.pl -out anno_cis_SNP_DATA_info09_b37_171_23042018_trans  -build hg19 cis_SNP_DATA_info09_b37_171_23042018_trans.avinput humandb/
+    NOTICE: The --geneanno operation is set to ON by default
+    NOTICE: Output files are written to anno_cis_SNP_DATA_info09_b37_171_23042018_trans.variant_function, anno_cis_SNP_DATA_info09_b37_171_23042018_trans.exonic_variant_function
+    NOTICE: Reading gene annotation from humandb/hg19_refGene.txt ... Done with 78239 transcripts (including 18578 without coding sequence annotation) for 28293 unique genes
+    NOTICE: Processing next batch with 258 unique variants in 258 input lines
+    NOTICE: Reading FASTA sequences from humandb/hg19_refGeneMrna.fa ... Done with 13 sequences
+    WARNING: A total of 465 sequences will be ignored due to lack of correct ORF annotation
+    NOTICE: Variants with invalid input format are written to anno_cis_SNP_DATA_info09_b37_171_23042018_trans.invalid_input
+

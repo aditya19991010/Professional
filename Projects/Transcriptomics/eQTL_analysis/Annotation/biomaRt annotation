@@ -1,0 +1,78 @@
+#Annotation of genes retreived from ANNOVAR
+
+library("AnnotationHub")
+library("org.Hs.eg.db")
+library("dplyr")
+library("biomaRt")
+
+
+# Connect to Ensembl BioMart
+mart <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+
+#select attributes
+attributes <- listAttributes(mart)
+write.csv(attributes, "../attributes_ensemble_mart_annotation_column.csv")
+
+filters <- listFilters(mart)
+row_numbers <- c(24,1,8,9,10,11,12,37)
+
+
+filtered_attributes <- attributes[row_numbers, ]
+View(filtered_attributes)
+
+#read query
+query <- read.csv("D:/Aditya/MMNP_eQTL/05_Results/cis_annotated_genes_MMNP_171_eQTL.txt", header = TRUE, sep = "\t")
+
+# Define your attributes and set up your filters
+nrow(filtered_attributes)
+
+# Initialize an empty list to store annotated data
+annotated_data_list <- list()
+
+# Define the number of attributes per iteration
+attributes_per_iteration <- 8
+
+# Define the total number of iterations needed
+total_iterations <- ceiling(nrow(filtered_attributes) / attributes_per_iteration)
+
+
+annotated_data_list_full <- list()
+# Loop through each query
+for (j in 1:nrow(query)) {
+  # Loop through each iteration
+  for (i in 1:total_iterations) {
+    # Define the range of attributes for this iteration
+    start_index <- (i - 1) * attributes_per_iteration + 1
+    end_index <- min(i * attributes_per_iteration, nrow(filtered_attributes))
+    attribute_range <- start_index:end_index
+    
+    # Get attributes for this iteration
+    attributes <- filtered_attributes$name[attribute_range]
+    
+    # Retrieve annotated data
+    annotated_data <- getBM(attributes = attributes, 
+                            filters = "external_gene_name", 
+                            mart = mart, 
+                            values = query[j,],  # Access the j-th row of the query
+                            useCache = TRUE)
+
+    # Store annotated data in the list
+    annotated_data_list[[i]] <- annotated_data
+  }
+  annotated_data_list_full[[j]] <- annotated_data_list[[i]]
+}
+
+# Function to convert all columns to character type
+convert_all_to_character <- function(df) {
+  df <- mutate_all(df, as.character)
+  return(df)
+}
+
+# Apply the function to each data frame in the list
+annotated_data_list_full <- lapply(annotated_data_list_full, convert_all_to_character)
+
+# Combine all data frames into a single table
+combined_table <- bind_rows(annotated_data_list_full)
+
+
+write.csv(combined_table, "Annovar_annotated_genes_info.csv")

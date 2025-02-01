@@ -1,0 +1,7 @@
+import in excel
+
+Post Analysis
+1. Graphical representation of the SNP idenfied region-wise 
+2. Functional annotation of annotated genes identified by ANNOVAR
+3. Find the closest eGENE from the annotated genes
+4. Phenotypic traits associated with the SNPs

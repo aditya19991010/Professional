@@ -1,0 +1,72 @@
+PLINK v1.90b6.21 64-bit (19 Oct 2020)
+Options in effect:
+  --double-id
+  --extract /home/sumit2/MMNP_RNAseqdata/MMNP_eQTL/Matrix_eQTL_Analysis/01_Raw_Data/rs_ID_info09_MMNP.txt
+  --geno 0.05
+  --hwe 1e-6
+  --maf 0.05
+  --make-bed
+  --out Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw
+  --pca
+  --recode A-transpose
+  --test-mishap
+  --threads 30
+  --vcf Chr_ALL_MMNP_MCduo_info05_b37_171_QC_EDITED_filtered_data.vcf
+
+Hostname: node4.ccmb.res.in
+Working directory: /home/sumit2/MMNP_RNAseqdata/Imputed_Genome
+Start time: Tue May  7 13:07:18 2024
+
+Random number seed: 1715067438
+257549 MB RAM detected; reserving 128774 MB for main workspace.
+--vcf:
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw-temporary.bed
++
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw-temporary.bim
++
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw-temporary.fam
+written.
+19879772 variants loaded from .bim file.
+171 people (0 males, 0 females, 171 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw.nosex .
+--extract: 8575993 variants remaining.
+Warning: At least 1 duplicate ID in --extract file.
+Using up to 30 threads (change this with --threads).
+Before main variant filters, 171 founders and 0 nonfounders present.
+Calculating allele frequencies... done.
+Total genotyping rate is 0.978191.
+1271089 variants removed due to missing genotype data (--geno).
+--hwe: 0 variants removed due to Hardy-Weinberg exact test.
+3159337 variants removed due to minor allele threshold(s)
+(--maf/--max-maf/--mac/--max-mac).
+4145567 variants and 171 people pass filters and QC.
+Note: No phenotypes present.
+Relationship matrix calculation complete.
+--pca: Results saved to
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw.eigenval
+and
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw.eigenvec .
+--make-bed to
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw.bed +
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw.bim +
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw.fam ...
+done.
+Warning: Underscore(s) present in sample IDs.
+--recode A-transpose to
+Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans.raw.traw ...
+done.
+Error: --test-mishap requires a sorted .bim.  Retry this command after using
+--make-bed to sort your data.
+
+End time: Tue May  7 13:09:10 2024
+
+
+
+perl convert2annovar.pl -format vcf4old ../../01_Raw_Data/Genotype_Data/ciseQTL_MMNP_MCduo_info09_b37_171_QC.recode.vcf  > ciseQTL_MMNP_MCduo_info09_b37_171_QC.avinput
+
+NOTICE: for SNPs, column 6 and beyond MAY BE heterozygosity status, quality score, read depth, RMS mapping quality, quality by depth, if these information can be recognized automatically
+NOTICE: for indels, column 6 and beyond MAY BE heterozygosity status, quality score, read depth, read count supporting indel call, RMS mapping quality, if these information can be recognized automatically
+NOTICE: Read 303 lines and wrote 248 different variants at 270 genomic positions (228 SNPs and 42 indels)
+NOTICE: Among 270 different variants at 270 positions, 24 are heterozygotes, 224 are homozygotes
+NOTICE: Among 228 SNPs, 166 are transitions, 62 are transversions (ratio=2.68)

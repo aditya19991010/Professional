@@ -1,0 +1,213 @@
+##Decision to choose algorithm for TWAS
+    https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs42003-023-05279-y/MediaObjects/42003_2023_5279_Fig3_HTML.png?as=webp 
+
+##Available data
+Reference eQTL data 
+    Data = Genotype, expression data  
+    Build specific model
+    target trait is tissue unspecific
+        Data Available = Single tissue -> Blood
+Genotype data
+    Individual based model
+Best suitable tool
+    PrediXcan 
+    kTWAS
+    TIGAR
+
+
+PredictDB files
+PATH = /home/sumit2/tools/MetaXcan/PredictDB-Tutorial/data_MMNP/output
+genotype = /home/sumit2/tools/MetaXcan/PredictDB-Tutorial/data_MMNP/input/genotypes/Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans_mod5.txt
+snp annotation = /home/sumit2/tools/MetaXcan/PredictDB-Tutorial/data_MMNP/input/annotations/snp_annotation/snp_annotation_v3.txt
+gene expression = /home/sumit2/tools/MetaXcan/PredictDB-Tutorial/data_MMNP/output/transformed_expression_clean_TPM_logTrans_quantNorm_limma_adj_SV_v2.txt
+gene annotation = /home/sumit2/tools/MetaXcan/PredictDB-Tutorial/data_MMNP/output/gene_annot.parsed.txt
+covariates = /home/sumit2/tools/MetaXcan/PredictDB-Tutorial/data_MMNP/output/PhenoData_171sample_mod1.csv  
+
+
+PredictDB
+    https://github.com/hakyimlab/PredictDB-Tutorial 
+    For creating a database that will be used for PrediXcan 
+    Data is required for 4 different set of inputs in the form of symbolic links
+    Convert this data into a SQLite database
+
+    Filter SNP withing 1mb of a gene
+    For each gene/tissue pair, fit an Elastic Net linear model 
+
+    Alpha = 0.5 and Lamba chosen by cross validation
+        To accomplish this for a single gene/tissue pair, we need the following data:
+
+        The start and end position of the gene
+        All snps located within 1Mb base pairs of that gene (1Mb upstream of trascription start site and 1Mb downstream of transcription termination site).
+        Expression quantification data for the gene in the specific tissue for the GTEx individuals
+        Genotypes for all these individuals on the snp set.
+    Inputs
+        This pipeline takes 4 different sets of input data:
+
+            >A gene annotation file
+                In gtf format. Must have gene_id (ensembl ID) and gene_name attributes.
+            >A SNP annotation file
+                A tab delimited file, with a header row, containing the fields: chromosome, position, VariantID, RefAllele, AlternativeAllele, original RSID number, more recent RSID number, Num_alt_per_site.
+                At a minimum, there must be a header row, with chromosome in the first column, position in the second, VariantID in the third (form: chr_pos_refAllele_altAllele_build), ref Allele in the fourth, alt Allele in the fifth, and rsid in the seventh.
+            >The GTEx genotype files by tissue
+                A tab delimited file, with a header row, first column being the variantID of the SNP, and all remaining columns being individual ids. The values indicate the dosage for the second allele listed in the variantID.
+            >The GTEx gene expression files by tissue
+                A tab delimited file, with a header row, first column being the ensembl ID of the gene, and all remaining columns being individual ids. The values indicate the expresion levels of the gene.
+            >Covariate data for the expression.
+                A tab delimited text file,
+
+
+Learning and creating database for PrediXcan from an example
+
+    Checking format of data 
+        reference - https://github.com/hakyimlab/PredictDB-Tutorial/blob/master/analysis/PredictDB-Tutorial.Rmd 
+        # Data
+        * Gene expression - YRI_expression_data.txt
+        Normalized gene expression in .txt format. 
+        * SNP annotation - geuvadis.annot.txt
+        * Gene annotation - gencode.v12.annotation.gtf
+        * Genotype - geuvadis.snps.dosage.txt
+
+
+
+##Changing header of SNP annotation file
+sed -e 's/Chr/chromosome/g' -e 's/Ref_b37/ref_vcf/g' -e 's/Alt/alt_vcf/g' PredictDB-Tutorial/data/input/annotations/snp_annotation/snp_annotation_v3.txt > PredictDB-Tutorial/data/input/annotations/snp_annotation/snp_annotation_v3.txt
+
+##split SNP file in different chromo
+python software/PredictDBPipeline/scripts/split_snp_annot_by_chr.py PredictDB-Tutorial/data/input/annotations/snp_annotation/snp_annotation_v3.txt PredictDB-Tutorial/data/output/snp_annot
+
+##split genotype file by chromosome
+python software/PredictDBPipeline/scripts/split_genotype_by_chr.py PredictDB-Tutorial/data/input/genotypes/Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans_mod5.vcf PredictDB-Tutorial/data/output/genotype
+
+##Creating directory to save results
+mkdir -p ./summary ./covariances ./weights
+
+
+## R script to create model
+source("gtex_v7_nested_cv_elnet.R")
+
+"%&%" <- function(a, b) paste(a, b, sep='')
+
+argv <- commandArgs(trailingOnly = TRUE)
+chrom <- argv[1]
+
+# Define the PATH variable
+PATH <- "/home/sumit2/tools/MetaXcan/PredictDB-Tutorial/data/output"
+
+# Concatenate file paths
+snp_annot_file <- PATH %&% "/snp_annot.chr" %&% chrom %&% ".txt"
+gene_annot_file <- PATH %&% "/gene_annot.parsed.txt"
+genotype_file <- PATH %&% "/genotype.chr" %&% chrom %&% ".txt"
+expression_file <- PATH %&% "/transformed_expression_clean_TPM_logTrans_quantNorm_limma_adj_SV.txt"
+covariates_file <- "/home/sumit2/tools/MetaXcan/data/input/expression_phenotypes/PhenoData_171sample_mod1.csv"
+prefix <- "Model_training"
+
+# Call the main function
+main(snp_annot_file, gene_annot_file, genotype_file, expression_file, covariates_file, as.numeric(chrom), prefix, null_testing=FALSE)
+
+
+##Uses PEER factors as Covariate
+
+##generating clean genotype file in VCF format
+    Extract SNP information from VCF
+    Convert this VCF into raw
+
+
+
+conda activate /home/sumit2/miniforge3/
+
+plink --double-id --extract /home/sumit2/MMNP_RNAseqdata/MMNP_eQTL/Matrix_eQTL_Analysis/01_Raw_Data/rs_ID_info09_MMNP.txt  --geno 0.05  --hwe 1e-6  --maf 0.05  --make-bed  --out Chr_ALL_MMNP_MCduo_info09_b37_171_QC_EDITED_FINAL_23042018_trans_twas  --test-mishap  --threads 30  --vcf /home/sumit2/MMNP_RNAseqdata/Imputed_Genome/Chr_ALL_MMNP_MCduo_info05_b37_171_QC_EDITED_filtered_data.vcf
+
+#processing files for PredictDB
+    parse_gtf.py - drawback - stopping due to NA gene Gene_Name
+    Revised parse_gtf.py > parse_gtf_updated.py (using ChatGPT)
+        #!/usr/bin/env python
+
+import sys
+
+'''
+Parses a GTF file to pull chromosome number, gene_id, gene_name, gene start
+position, and gene end position, and put in a tab-delimited file.
+
+Runs from the command line. The first argument is the GTF file, the second is the
+output file.
+'''
+
+HEADER_FIELDS = ['chr', 'gene_id', 'gene_name', 'start', 'end', 'gene_type']
+
+def parse_gtf(gtf_path, out_path):
+    with open(gtf_path, 'r') as gtf, open(out_path, 'w') as out:
+        out_header = '\t'.join(HEADER_FIELDS) + '\n'
+        out.write(out_header)
+        for line in gtf:
+            # Skip comments.
+            if line[0] == '#':
+                continue
+            gene_fields = line.split('\t')
+            # Exclude any rows not describing genes.
+            if gene_fields[2] != 'gene':
+                continue
+            gene_attributes = gene_fields[-1].split('; ')
+            attr_dict = {}
+            for attribute in gene_attributes:
+                if attribute:
+                    key, value = attribute.split()
+                    attr_dict[key] = value.strip('"')
+            
+            # Some GTF files may have chromosome number with 'chr' prefix.
+            # We just need the number.
+            chr = gene_fields[0][3:] if "chr" in gene_fields[0] else gene_fields[0]
+            # Extract rest of desired fields.
+            start = gene_fields[3]
+            end = gene_fields[4]
+            id = attr_dict.get('gene_id', 'NA')
+            type = attr_dict.get('gene_biotype', 'NA')
+            name = attr_dict.get('gene_name', 'NA')
+            # Concatenate together and write out to file.
+            out_line = '\t'.join([chr, id, name, start, end, type]) + '\n'
+            out.write(out_line)
+
+if __name__ == '__main__':
+    gtf_path = sys.argv[1]
+    out_path = sys.argv[2]
+    parse_gtf(gtf_path, out_path)
+
+
+
+python parse_gtf_updated.py /home/sumit2/tools/MetaXcan/data/input/annotations/gene_annotation/Homo_sapiens.GRCh38.107.gtf ../output/snp_annot.txt
+
+
+
+
+
+processing gene expression file
+
+library(tidyr)
+
+gene_exp <- read.table("expression_phenotypes/clean_GExp_TPM_logTrans_quantNorm_limma_adj_SV.csv", sep = ",", header = T)
+
+head(gene_exp)
+head(gene_exp)[1:4,1:4]
+gene_exp = rename(gene_exp, 'Gene_Name' = Gene_Symbol)
+gene_exp = rename(gene_exp, 'X' = Gene_Symbol)
+gene_exp = rename(gene_exp, 'Gene_Name' = Gene_Symbol)
+gene_exp = rename(gene_exp, 'Gene_Name' = X)
+head(gene_exp)[1:4,1:4]
+# Transpose the data to enable you rub peer factors
+n = gene_exp$Gene_Name
+gene_exp_transpose <- as.data.frame(t(gene_exp[,-1]))
+colnames(gene_exp_transpose) <- n
+# write the transposed gene expression. The .csv is for the peer tool
+write.table(gene_exp_transpose, file = './output/gene_exp.csv', sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(gene_exp_transpose, file = "./output/transformed_expression.txt", sep = "\t",
+            row.names = TRUE)
+getwd()
+write.table(gene_exp_transpose, file = './output/gene_exp.csv', sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(gene_exp_transpose, file = '../output/gene_exp_clean_TPM_logTrans_quantNorm_limma_adj_SV.csv', sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(gene_exp_transpose, file = '../output/gene_exp_clean_TPM_logTrans_quantNorm_limma_adj_SV.csv', sep = ",", col.names = TRUE, row.names = FALSE)
+write.table(gene_exp_transpose, file = "./output/transformed_expression.txt", sep = "\t",
+row.names = T)
+write.table(gene_exp_transpose, file = "../output/transformed_expression_clean_TPM_logTrans_quantNorm_limma_adj_SV.txt", sep = "\t", row.names =T)
+pwd
+getwd()
+write.table(gene_exp_transpose, file = '../output/gene_exp_clean_TPM_logTrans_quantNorm_limma_adj_SV.csv', sep = ",", col.names = TRUE, row.names = FALSE)
+history()
