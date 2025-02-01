@@ -1,0 +1,23 @@
+1. Ask question for reaching to target value
+2. summary of the plots and observed patterns
+
+
+    # Initialize variables
+    J_prv = float("inf")
+    J_curr = 0
+    iter_count = 0
+
+    while abs(J_prv - J_curr) > tol and iter_count < max_iter:
+        J_prv = J_curr  # Update previous cost
+
+        # Compute hypothesis and cost
+        hx = comp_hx(X, theta)
+        J_curr = compute_cost(hx, y)
+
+        # Update theta
+        theta = comp_update_theta(hx, X, y, theta, alpha)
+
+        # Print progress
+        print(f"Iteration {iter_count + 1}: Cost = {J_curr}")
+
+        iter_count += 1
